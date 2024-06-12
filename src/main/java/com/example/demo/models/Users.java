@@ -1,4 +1,4 @@
-package com.example.models;
+package com.example.demo.models;
 
 public class Users {
     private String name;
@@ -50,9 +50,5 @@ public class Users {
     public void setColor(String color) {
         this.color = color;
     }
-
-    
-    
-
 
 }
