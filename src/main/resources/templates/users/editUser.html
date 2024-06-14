@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Rectangle</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="/script.js" defer></script>
+
+</head>
+
+<body>
+    <h1>Edit Rectangle</h1>
+    <div class="edit-center">
+        <form th:action="@{/users/update/{id}(id=${user.uid})}" th:object="${user}" method="post">
+            <!-- name -->
+            <label for="name">Name:</label>
+            <input type="text" id="name" th:field="*{name}" />
+            <br>
+            <!-- width | allow dynamic change to size and colour -->
+            <label for="width">Width:</label>
+            <input type="range" id="width" name="width" th:value="${user.width}" min="0" max="500"
+                oninput="updateRectangle();">
+            <output id="widthOutput">500</output>
+            <br>
+            <!-- height | allow dynamic change to size and colour  -->
+            <label for="height">Height:</label>
+            <input type="range" id="height" name="height" th:value="${user.height}" min="0" max="500"
+                oninput="updateRectangle();">
+            <output id="heightOutput">500</output>
+            <br>
+            <!-- color -->
+            <label for="color">Color:</label>
+            <input type="color" id="color" name="color" th:field="*{color}" oninput="updateRectangle()">
+            <br>
+            <!-- update -->
+            <button class="update" type="submit">Update</button>
+        </form>
+        <!-- cancel - return to view -->
+        <button class="cancel" onclick="location.href='/users/view';">Cancel</button>
+    </div>
+    <!-- dynamic rectangle display -->
+    <div id="rectangle" class="rectangle"></div>
+</body>
+
+</html>

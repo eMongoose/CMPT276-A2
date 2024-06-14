@@ -7,43 +7,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="/style.css">
-    <script src="script.js" defer></script>
+    <script src="/script.js" defer></script>
 
 </head>
 
 <body>
-    <main class="container-fluid">
-        <div class="row justify-content-center">
-            <div class="col-md-4">
-                <h1>Rectangles</h1>
-                <table id="table" >
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Color</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="user, stat : ${us}">
-                            <td th:text="${stat.count}"></td>
-                            <td th:text="${user.name}">Name</td>
-                            <td th:text="${user.color}">Color</td>
-                            <td>
-                                <form th:action="'/users/delete/' + ${user.uid}" method="post">
-                                    <input type="hidden" name="_method" value="DELETE">
-                                    <button type="submit">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <button class="add" onclick="location.href='/add.html';">Add Rectangle</button>
-
-            </div>
-        </div>
-    </main>
+    <h1>Rectangles</h1>
+    <div class="show-center">
+        <table id="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Color</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user, stat : ${us}">
+                    <td th:text="${stat.count}"></td>
+                    <td><a th:href="'/users/edit/' + ${user.uid}" th:text="${user.name}">Name</a></td>
+                    <td th:style="'color: ' + ${user.color}" th:text="${user.color}">Color</td>
+                    <td>
+                        <form th:action="'/users/delete/' + ${user.uid}" method="post">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="add-rectangle" onclick="location.href='/add.html';">Add Rectangle</button>
+    </div>
 </body>
 
 </html>

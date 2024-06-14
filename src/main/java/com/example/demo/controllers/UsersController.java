@@ -3,10 +3,13 @@ package com.example.demo.controllers;
 import java.util.List;
 
 import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,14 +30,14 @@ public class UsersController {
     public String getAllUsers(Model model) {
         System.out.println("Get all users");
         List<User> users = userRepo.findAll();
-        //users.add(new User("emily", 50, 50, "red"));
+        // users.add(new User("emily", 50, 50, "red"));
         // end of database call
 
         model.addAttribute("us", users);
         return "users/showAll";
     }
-    // ================================================================================================
 
+    // ================================================================================================
     // add rectangle to database
     @PostMapping("/users/add")
     // extract parameters from request
@@ -42,15 +45,23 @@ public class UsersController {
         System.out.println("ADD user"); // console log, user has been added.
 
         // parsing data
-        String name = newuser.get("name");
-        int width = Integer.parseInt(newuser.get("width")); // Correctly parse int
-        int height = Integer.parseInt(newuser.get("height")); // Correctly parse int
-        String color = newuser.get("color"); // Directly use the String
+        String name = newuser.getOrDefault("name", "No name");
+        int width = parseIntOrDefault(newuser.get("width"), 250);
+        int height = parseIntOrDefault(newuser.get("height"), 250);
+        String color = newuser.getOrDefault("color", "#FFFFFF");
 
         // create and save the user object
         userRepo.save(new User(name, width, height, color));
-        response.setStatus(201); // created a new object
         return "redirect:/users/view";
+    }
+
+    // check if the value exists
+    private int parseIntOrDefault(String value, int defaultValue) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
     }
 
     // ================================================================================================
@@ -61,6 +72,32 @@ public class UsersController {
 
         // delete rectangle
         userRepo.deleteById(id);
+        return "redirect:/users/view";
+    }
+
+    // ================================================================================================
+    // edit rectangle
+    @GetMapping("/users/edit/{id}")
+    public String editUser(@PathVariable("id") int id, Model model, RedirectAttributes redirectAttributes) {
+        Optional<User> userOptional = userRepo.findById(id);
+
+        model.addAttribute("user", userOptional.get());
+        return "users/editUser"; 
+    }
+
+    @PostMapping("/users/update/{id}")
+    public String updateUser(@PathVariable("id") int id, @ModelAttribute("user") User userForm,
+            RedirectAttributes redirectAttributes) {
+        Optional<User> userOptional = userRepo.findById(id);
+
+        User user = userOptional.get();
+        user.setName(userForm.getName());
+        user.setWidth(userForm.getWidth());
+        user.setHeight(userForm.getHeight());
+        user.setColor(userForm.getColor());
+
+        userRepo.save(user);
+        redirectAttributes.addFlashAttribute("successMessage", "User updated successfully!");
         return "redirect:/users/view";
     }
 }
